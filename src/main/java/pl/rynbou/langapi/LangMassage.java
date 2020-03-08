@@ -24,12 +24,12 @@ public class LangMassage {
 
     public LangMassage(ConfigurationSection section) {
 
-        useChat = section.getBoolean("useChat");
+        useChat = section.getBoolean("use-chat");
         if (useChat) {
             chatContent = color(section.getString("chat.content"));
         }
 
-        useTitle = section.getBoolean("useTitle");
+        useTitle = section.getBoolean("use-title");
         if (useTitle) {
             titleContent = color(section.getString("title.content"));
             subtitleContent = color(section.getString("title.sub-content"));
@@ -38,7 +38,7 @@ public class LangMassage {
             fadeOut = section.getInt("title.fade-out");
         }
 
-        useActionBar = section.getBoolean("useActionBar");
+        useActionBar = section.getBoolean("use-actionbar");
         if (useActionBar) {
             actionBarContent = color(section.getString("actionbar.content"));
         }
