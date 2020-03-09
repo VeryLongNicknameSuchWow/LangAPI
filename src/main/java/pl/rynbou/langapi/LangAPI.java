@@ -1,5 +1,6 @@
 package pl.rynbou.langapi;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -8,16 +9,19 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 public class LangAPI {
 
     private File file;
+    private Logger logger;
 
     private Map<String, LangMassage> messages;
 
     public LangAPI(JavaPlugin plugin, String fileName) {
         plugin.saveResource(fileName, false);
         this.file = new File(plugin.getDataFolder(), fileName);
+        this.logger = Bukkit.getLogger();
         reload();
     }
 
@@ -25,6 +29,7 @@ public class LangAPI {
         LangMassage message = messages.get(id);
 
         if (message == null) {
+            logger.warning("[LangAPI] missing message: " + id);
             return false;
         }
 
@@ -38,6 +43,7 @@ public class LangAPI {
         ConfigurationSection section = YamlConfiguration.loadConfiguration(file).getConfigurationSection("messages");
 
         if (section == null) {
+            logger.warning("[LangAPI] Missing messages section!");
             return false;
         }
 
