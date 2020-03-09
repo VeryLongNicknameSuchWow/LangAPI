@@ -43,7 +43,7 @@ public class LangAPI {
         ConfigurationSection section = YamlConfiguration.loadConfiguration(file).getConfigurationSection("messages");
 
         if (section == null) {
-            logger.warning("[LangAPI] Missing messages section!");
+            logger.warning("[LangAPI] Missing messages section in file " + file.getName());
             return false;
         }
 
