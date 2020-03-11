@@ -7,10 +7,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LangMassage {
 
     private boolean useChat;
-    private String chatContent;
+    private List<String> chatContent = new ArrayList<>();
 
     private boolean useTitle;
     private String titleContent;
@@ -26,7 +29,11 @@ public class LangMassage {
 
         useChat = section.getBoolean("chat-enabled");
         if (useChat) {
-            chatContent = color(section.getString("chat.content"));
+            if (section.isString("chat.content")) {
+                chatContent.add(section.getString("chat.content"));
+            } else if (section.isList("chat.content")) {
+                chatContent.addAll(section.getStringList("chat.content"));
+            }
         }
 
         useTitle = section.getBoolean("title-enabled");
@@ -56,8 +63,9 @@ public class LangMassage {
 
     public void send(Player player, Replacement... replacements) {
         if (useChat) {
-            String chatMsg = replace(chatContent, replacements);
-            player.sendMessage(chatMsg);
+            for (String chatMsg : chatContent) {
+                player.sendMessage(replace(chatMsg, replacements));
+            }
         }
         if (useTitle) {
             String titleMsg = replace(titleContent, replacements);
