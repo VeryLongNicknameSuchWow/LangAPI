@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class LangMassage {
 
@@ -30,9 +31,10 @@ public class LangMassage {
         useChat = section.getBoolean("chat-enabled");
         if (useChat) {
             if (section.isString("chat.content")) {
-                chatContent.add(section.getString("chat.content"));
+                chatContent.add(color(section.getString("chat.content")));
             } else if (section.isList("chat.content")) {
-                chatContent.addAll(section.getStringList("chat.content"));
+                chatContent = section.getStringList("chat.content").stream()
+                        .map(this::color).collect(Collectors.toList());
             }
         }
 
