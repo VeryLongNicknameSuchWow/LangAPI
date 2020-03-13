@@ -1,4 +1,4 @@
-package pl.rynbou.langapi;
+package pl.rynbou.langapi_v2;
 
 public class Replacement {
 
