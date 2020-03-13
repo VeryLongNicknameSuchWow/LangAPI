@@ -25,6 +25,29 @@ public class LangAPI {
         reload();
     }
 
+    public LangMassage getMessage(String id) {
+        LangMassage message = messages.get(id);
+
+        if (message == null) {
+            logger.warning("[LangAPI] missing message: " + id);
+            return null;
+        }
+
+        return message;
+    }
+
+    public boolean broadcast(String id, Replacement... replacements) {
+        LangMassage message = messages.get(id);
+
+        if (message == null) {
+            logger.warning("[LangAPI] missing message: " + id);
+            return false;
+        }
+
+        message.broadcast(replacements);
+        return true;
+    }
+
     public boolean sendMessage(String id, Player player, Replacement... replacements) {
         LangMassage message = messages.get(id);
 

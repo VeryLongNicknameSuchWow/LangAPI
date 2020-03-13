@@ -34,7 +34,7 @@ public class LangMassage {
                 chatContent.add(color(section.getString("chat.content")));
             } else if (section.isList("chat.content")) {
                 chatContent = section.getStringList("chat.content").stream()
-                        .map(this::color).collect(Collectors.toList());
+                        .map(LangMassage::color).collect(Collectors.toList());
             }
         }
 
@@ -51,10 +51,6 @@ public class LangMassage {
         if (useActionBar) {
             actionBarContent = color(section.getString("actionbar.content"));
         }
-    }
-
-    private String color(String msg) {
-        return ChatColor.translateAlternateColorCodes('&', msg);
     }
 
     public void broadcast(Replacement... replacements) {
@@ -80,7 +76,51 @@ public class LangMassage {
         }
     }
 
-    private String replace(String msg, Replacement... replacements) {
+    public boolean useChat() {
+        return useChat;
+    }
+
+    public List<String> getChatContent() {
+        return chatContent;
+    }
+
+    public boolean useTitle() {
+        return useTitle;
+    }
+
+    public String getTitleContent() {
+        return titleContent;
+    }
+
+    public String getSubtitleContent() {
+        return subtitleContent;
+    }
+
+    public int getFadeIn() {
+        return fadeIn;
+    }
+
+    public int getStay() {
+        return stay;
+    }
+
+    public int getFadeOut() {
+        return fadeOut;
+    }
+
+    public boolean useActionBar() {
+        return useActionBar;
+    }
+
+    public String getActionBarContent() {
+        return actionBarContent;
+    }
+
+    public static String color(String msg) {
+        return ChatColor.translateAlternateColorCodes('&', msg);
+    }
+
+    public static String replace(String msg, Replacement... replacements) {
         String toReturn = msg;
         for (Replacement r : replacements) {
             toReturn = toReturn.replace(r.getFrom(), r.getTo());
