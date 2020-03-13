@@ -80,20 +80,20 @@ public class LangMassage {
         return useChat;
     }
 
-    public List<String> getChatContent() {
-        return chatContent;
+    public List<String> getChatContent(Replacement... replacements) {
+        return chatContent.stream().map(s -> replace(s, replacements)).collect(Collectors.toList());
     }
 
     public boolean useTitle() {
         return useTitle;
     }
 
-    public String getTitleContent() {
-        return titleContent;
+    public String getTitleContent(Replacement... replacements) {
+        return replace(titleContent, replacements);
     }
 
-    public String getSubtitleContent() {
-        return subtitleContent;
+    public String getSubtitleContent(Replacement... replacements) {
+        return replace(subtitleContent, replacements);
     }
 
     public int getFadeIn() {
@@ -112,8 +112,8 @@ public class LangMassage {
         return useActionBar;
     }
 
-    public String getActionBarContent() {
-        return actionBarContent;
+    public String getActionBarContent(Replacement... replacements) {
+        return replace(actionBarContent, replacements);
     }
 
     public static String color(String msg) {
