@@ -61,17 +61,15 @@ public class LangMassage {
 
     public void send(Player player, Replacement... replacements) {
         if (useChat) {
-            for (String chatMsg : chatContent) {
-                player.sendMessage(replace(chatMsg, replacements));
-            }
+            getChatContent(replacements).forEach(player::sendMessage);
         }
         if (useTitle) {
-            String titleMsg = replace(titleContent, replacements);
-            String subtitleMsg = replace(subtitleContent, replacements);
+            String titleMsg = getTitleContent(replacements);
+            String subtitleMsg = getSubtitleContent(replacements);
             player.sendTitle(titleMsg, subtitleMsg, fadeIn, stay, fadeOut);
         }
         if (useActionBar) {
-            String actionBarMsg = replace(actionBarContent, replacements);
+            String actionBarMsg = getActionBarContent(replacements);
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(actionBarMsg));
         }
     }
