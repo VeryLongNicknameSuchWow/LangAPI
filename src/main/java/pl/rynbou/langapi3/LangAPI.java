@@ -4,6 +4,7 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -81,12 +82,32 @@ public final class LangAPI {
         return true;
     }
 
+    public boolean sendMessage(String id, CommandSender sender, Replacement... replacements) {
+        LangMessage message = messages.get(id);
+
+        if (message == null) {
+            sender.sendMessage("[LangAPI] missing message: " + id);
+            return false;
+        }
+
+        message.send(sender, replacements);
+        return true;
+    }
+
     public boolean sendMessage(String id, Player player, String... strings) {
         return sendMessage(id, player, convert(strings));
     }
 
+    public boolean sendMessage(String id, CommandSender sender, String... strings) {
+        return sendMessage(id, sender, convert(strings));
+    }
+
     public boolean sendMessage(String id, Player player) {
         return sendMessage(id, player, "", "");
+    }
+
+    public boolean sendMessage(String id, CommandSender sender) {
+        return sendMessage(id, sender, "", "");
     }
 
     public boolean reload() {
@@ -170,6 +191,12 @@ public final class LangAPI {
             if (useActionBar) {
                 String actionBarMsg = getActionBarContent(replacements);
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(actionBarMsg));
+            }
+        }
+
+        private void send(CommandSender sender, Replacement... replacements) {
+            if (useChat) {
+                getChatContent(replacements).forEach(sender::sendMessage);
             }
         }
 
