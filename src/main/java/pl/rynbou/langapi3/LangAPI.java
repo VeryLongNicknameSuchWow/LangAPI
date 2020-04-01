@@ -64,6 +64,10 @@ public final class LangAPI {
         return broadcast(id, convert(strings));
     }
 
+    public boolean broadcast(String id) {
+        return broadcast(id, "", "");
+    }
+
     public boolean sendMessage(String id, Player player, Replacement... replacements) {
         LangMessage message = messages.get(id);
 
@@ -79,6 +83,10 @@ public final class LangAPI {
 
     public boolean sendMessage(String id, Player player, String... strings) {
         return sendMessage(id, player, convert(strings));
+    }
+
+    public boolean sendMessage(String id, Player player) {
+        return sendMessage(id, player, "", "");
     }
 
     public boolean reload() {
