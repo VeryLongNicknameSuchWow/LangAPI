@@ -49,7 +49,7 @@ public final class LangAPI {
             log.warning("[LangAPI] missing message: " + id);
 
             for (Player player : Bukkit.getOnlinePlayers()) {
-                player.sendMessage("[LangAPI] missing message: " + id);
+                player.sendMessage("[LangAPI] missing message: " + id + id + formatReplacements(replacements));
             }
 
             return false;
@@ -74,7 +74,7 @@ public final class LangAPI {
 
         if (message == null) {
             log.warning("[LangAPI] missing message: " + id);
-            player.sendMessage("[LangAPI] missing message: " + id);
+            player.sendMessage("[LangAPI] missing message: " + id + id + formatReplacements(replacements));
             return false;
         }
 
@@ -86,7 +86,7 @@ public final class LangAPI {
         LangMessage message = messages.get(id);
 
         if (message == null) {
-            sender.sendMessage("[LangAPI] missing message: " + id);
+            sender.sendMessage("[LangAPI] missing message: " + id + formatReplacements(replacements));
             return false;
         }
 
@@ -124,6 +124,20 @@ public final class LangAPI {
             messages.put(id, new LangMessage(section.getConfigurationSection(id)));
         }
         return true;
+    }
+
+    private String formatReplacements(Replacement... replacements) {
+        if (replacements.length == 0) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        for (Replacement r : replacements) {
+            sb.append(r.from + " = " + r.to + ", ");
+        }
+        sb.append("}");
+        return sb.toString();
     }
 
     public final static class Replacement {
