@@ -49,7 +49,7 @@ public final class LangAPI {
             log.warning("[LangAPI] missing message: " + id);
 
             for (Player player : Bukkit.getOnlinePlayers()) {
-                player.sendMessage("[LangAPI] missing message: " + id + id + formatReplacements(replacements));
+                player.sendMessage("[LangAPI] missing message: " + id + formatReplacements(replacements));
             }
 
             return false;
@@ -74,7 +74,7 @@ public final class LangAPI {
 
         if (message == null) {
             log.warning("[LangAPI] missing message: " + id);
-            player.sendMessage("[LangAPI] missing message: " + id + id + formatReplacements(replacements));
+            player.sendMessage("[LangAPI] missing message: " + id + formatReplacements(replacements));
             return false;
         }
 
