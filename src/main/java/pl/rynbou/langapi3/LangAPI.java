@@ -51,8 +51,11 @@ public final class LangAPI {
 
             for (Player player : Bukkit.getOnlinePlayers()) {
                 player.sendMessage("[LangAPI] missing message: " + id);
-                player.sendMessage("Replacements:");
-                formatReplacements(replacements).forEach(player::sendMessage);
+                List<String> replacementsFormatted = formatReplacements(replacements);
+                if (replacementsFormatted.size() > 0) {
+                    player.sendMessage("Replacements:");
+                }
+                replacementsFormatted.forEach(player::sendMessage);
             }
 
             return false;
@@ -78,8 +81,11 @@ public final class LangAPI {
         if (message == null) {
             log.warning("[LangAPI] missing message: " + id);
             player.sendMessage("[LangAPI] missing message: " + id);
-            player.sendMessage("Replacements:");
-            formatReplacements(replacements).forEach(player::sendMessage);
+            List<String> replacementsFormatted = formatReplacements(replacements);
+            if (replacementsFormatted.size() > 0) {
+                player.sendMessage("Replacements:");
+            }
+            replacementsFormatted.forEach(player::sendMessage);
             return false;
         }
 
@@ -92,8 +98,11 @@ public final class LangAPI {
 
         if (message == null) {
             sender.sendMessage("[LangAPI] missing message: " + id);
-            sender.sendMessage("Replacements:");
-            formatReplacements(replacements).forEach(sender::sendMessage);
+            List<String> replacementsFormatted = formatReplacements(replacements);
+            if (replacementsFormatted.size() > 0) {
+                sender.sendMessage("Replacements:");
+            }
+            replacementsFormatted.forEach(sender::sendMessage);
             return false;
         }
 
