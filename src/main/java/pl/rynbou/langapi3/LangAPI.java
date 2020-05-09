@@ -12,6 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,7 +50,9 @@ public final class LangAPI {
             log.warning("[LangAPI] missing message: " + id);
 
             for (Player player : Bukkit.getOnlinePlayers()) {
-                player.sendMessage("[LangAPI] missing message: " + id + formatReplacements(replacements));
+                player.sendMessage("[LangAPI] missing message: " + id);
+                player.sendMessage("Replacements:");
+                formatReplacements(replacements).forEach(player::sendMessage);
             }
 
             return false;
@@ -74,7 +77,9 @@ public final class LangAPI {
 
         if (message == null) {
             log.warning("[LangAPI] missing message: " + id);
-            player.sendMessage("[LangAPI] missing message: " + id + formatReplacements(replacements));
+            player.sendMessage("[LangAPI] missing message: " + id);
+            player.sendMessage("Replacements:");
+            formatReplacements(replacements).forEach(player::sendMessage);
             return false;
         }
 
@@ -86,7 +91,9 @@ public final class LangAPI {
         LangMessage message = messages.get(id);
 
         if (message == null) {
-            sender.sendMessage("[LangAPI] missing message: " + id + formatReplacements(replacements));
+            sender.sendMessage("[LangAPI] missing message: " + id);
+            sender.sendMessage("Replacements:");
+            formatReplacements(replacements).forEach(sender::sendMessage);
             return false;
         }
 
@@ -126,18 +133,12 @@ public final class LangAPI {
         return true;
     }
 
-    private String formatReplacements(Replacement... replacements) {
-        if (replacements.length == 0) {
-            return "";
-        }
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
-        for (Replacement r : replacements) {
-            sb.append(r.from + " = " + r.to + ", ");
-        }
-        sb.append("}");
-        return sb.toString();
+    private List<String> formatReplacements(Replacement... replacements) {
+        return Arrays.stream(replacements)
+                .filter(replacement -> !replacement.from.isEmpty())
+                .filter(replacement -> !replacement.from.equals(replacement.to))
+                .map(replacement -> "\"" + replacement.from + "\" = \"" + replacement.to + "\"")
+                .collect(Collectors.toList());
     }
 
     public final static class Replacement {
