@@ -6,11 +6,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,15 +24,24 @@ import java.util.stream.Collectors;
 
 public final class LangAPI {
 
-    private final File file;
+    private final ConfigurationSection defaultSection;
+    private final ConfigurationSection customSection;
     private final Logger log;
 
     private final Map<String, LangMessage> messages = new ConcurrentHashMap<>();
 
     public LangAPI(JavaPlugin plugin, String filename) {
-        plugin.saveResource(filename, false);
-        this.file = new File(plugin.getDataFolder(), filename);
         this.log = plugin.getLogger();
+
+        plugin.saveResource(filename, false);
+        File customFile = new File(plugin.getDataFolder(), filename);
+        FileConfiguration customConfiguration = YamlConfiguration.loadConfiguration(customFile);
+        this.customSection = customConfiguration.getConfigurationSection("messages");
+
+        InputStream defaultStream = plugin.getClass().getResourceAsStream("/messages.yml");
+        InputStreamReader defaultStreamReader = new InputStreamReader(defaultStream);
+        FileConfiguration defaultConfiguration = YamlConfiguration.loadConfiguration(defaultStreamReader);
+        this.defaultSection = defaultConfiguration.getConfigurationSection("messages");
     }
 
     private static Replacement[] convert(String[] strings) {
@@ -75,28 +87,11 @@ public final class LangAPI {
         return broadcast(id, "", "");
     }
 
-    public boolean sendMessage(String id, Player player, Replacement... replacements) {
-        LangMessage message = messages.get(id);
-
-        if (message == null) {
-            log.warning("[LangAPI] missing message: " + id);
-            player.sendMessage("[LangAPI] missing message: " + id);
-            List<String> replacementsFormatted = formatReplacements(replacements);
-            if (replacementsFormatted.size() > 0) {
-                player.sendMessage("Replacements:");
-            }
-            replacementsFormatted.forEach(player::sendMessage);
-            return false;
-        }
-
-        message.send(player, replacements);
-        return true;
-    }
-
     public boolean sendMessage(String id, CommandSender sender, Replacement... replacements) {
         LangMessage message = messages.get(id);
 
         if (message == null) {
+            log.warning("[LangAPI] missing message: " + id);
             sender.sendMessage("[LangAPI] missing message: " + id);
             List<String> replacementsFormatted = formatReplacements(replacements);
             if (replacementsFormatted.size() > 0) {
@@ -110,16 +105,8 @@ public final class LangAPI {
         return true;
     }
 
-    public boolean sendMessage(String id, Player player, String... strings) {
-        return sendMessage(id, player, convert(strings));
-    }
-
     public boolean sendMessage(String id, CommandSender sender, String... strings) {
         return sendMessage(id, sender, convert(strings));
-    }
-
-    public boolean sendMessage(String id, Player player) {
-        return sendMessage(id, player, "", "");
     }
 
     public boolean sendMessage(String id, CommandSender sender) {
@@ -129,16 +116,19 @@ public final class LangAPI {
     public boolean reload() {
         messages.clear();
 
-        ConfigurationSection section = YamlConfiguration.loadConfiguration(file).getConfigurationSection("messages");
-
-        if (section == null) {
+        if (customSection == null || defaultSection == null) {
             log.warning("[LangAPI] Missing messages section!");
             return false;
         }
 
-        for (String id : section.getKeys(false)) {
-            messages.put(id, new LangMessage(section.getConfigurationSection(id)));
+        for (String id : defaultSection.getKeys(false)) {
+            messages.put(id, new LangMessage(defaultSection.getConfigurationSection(id)));
         }
+
+        for (String id : customSection.getKeys(false)) {
+            messages.put(id, new LangMessage(customSection.getConfigurationSection(id)));
+        }
+
         return true;
     }
 
@@ -219,6 +209,10 @@ public final class LangAPI {
         }
 
         private void send(CommandSender sender, Replacement... replacements) {
+            if (sender instanceof Player) {
+                send((Player) sender, replacements);
+                return;
+            }
             if (useChat) {
                 getChatContent(replacements).forEach(sender::sendMessage);
             }
